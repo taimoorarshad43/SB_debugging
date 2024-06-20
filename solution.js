@@ -47,9 +47,8 @@ function createAccount (newAccountId, newAccountOwner)
 
 function depositMoney (accountId, amount)
 {
-	if(accountId === undefined || amount <= 0 || amount === Infinity 
-	|| accountId <= 0 || Number.isInteger(accountId) === false || Number.isInteger(amount) === false){
-		throw new Error("You need to specify an valid account ID and/or a positive deposit amount.");
+	if(amount <= 0 || amount === Infinity || Number.isInteger(amount) === false){
+		throw new Error("You need to specify a positive deposit amount.");
 	}
 
 	const account = getAccountById(accountId);
@@ -64,8 +63,7 @@ function depositMoney (accountId, amount)
 
 function withdrawMoney (accountId, amount)
 {
-	if(accountId === undefined || amount <= 0 || amount === Infinity
-	|| accountId <= 0 || Number.isInteger(accountId) === false || Number.isInteger(amount) === false)
+	if(amount <= 0 || amount === Infinity || Number.isInteger(amount) === false)
 	{
 		throw new Error("You need to specify an valid account ID and/or a positive withdrawal amount.");
 	}
@@ -108,7 +106,7 @@ function transferMoney (fromAccountId, toAccountId, amount)
 		throw new Error("Invalid value for transfer amount: The amount must be a positive finite number.");
 	}
 
-	if(fromAccount.balance - amount < 0){
+	if(fromAccount.balance < amount){
 		throw new Error("You cannot transfer this amount!");
 	}
 
