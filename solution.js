@@ -12,23 +12,46 @@ function getAccountById (id)
 			return account;
 		}
 	}
-	//We should only get here if we didn't find an account
-	throw new Error("Account not found, please enter a valid ID.");
 }
 
+//TODO:
+//Needs to handle empty account info and invalid account information
+//Needs to handle dupicate account info
 function createAccount (newAccountId, newAccountOwner)
 {
-	accounts.push(
-		{
-			id: newAccountId,
-			owner: newAccountOwner,
-			balance: "0"
-		}
-	);
+	if(newAccountId === undefined || newAccountOwner === undefined){
+		throw new Error("You need to specify an new account ID and a new Owner.");
+	}
+	if(newAccountId <= 0 || Number.isInteger(newAccountId) === false || typeof newAccountOwner !== "string" || newAccountOwner.trim().length === 0){
+		throw new Error("Account ID must be a positive integer and new Owner must be a valid string");
+	}
+
+	//Checking to see if inputted ID already exists
+	let duplicate = getAccountById(newAccountId);
+	if(duplicate !== undefined){
+		throw new Error("Account ID already exists!");
+	}
+	
+	try{
+		accounts.push(
+			{
+				id: newAccountId,
+				owner: newAccountOwner,
+				balance: 0 //This should be a number
+			}
+		);
+	}catch(err){
+		console.log(err.message);
+	}
 }
 
 function depositMoney (accountId, amount)
 {
+	if(accountId === undefined || amount <= 0 || amount === Infinity 
+	|| accountId <= 0 || Number.isInteger(accountId) === false || Number.isInteger(amount) === false){
+		throw new Error("You need to specify an valid account ID and/or a positive deposit amount.");
+	}
+
 	const account = getAccountById(accountId);
 
 	if (!account)
@@ -41,6 +64,11 @@ function depositMoney (accountId, amount)
 
 function withdrawMoney (accountId, amount)
 {
+	if(accountId === undefined || amount <= 0 || amount === Infinity
+	|| accountId <= 0 || Number.isInteger(accountId) === false || Number.isInteger(amount) === false)
+	{
+		throw new Error("You need to specify an valid account ID and/or a positive withdrawal amount.");
+	}
 	const account = getAccountById(accountId);
 
 	if (!account)
@@ -51,6 +79,10 @@ function withdrawMoney (accountId, amount)
 	if (!Number.isFinite(amount))
 	{
 		throw new Error("Invalid value for withdrawal amount: The amount must be a finite number.");
+	}
+
+	if(amount > account.balance){
+		throw new Error("You cannot withdraw this amount!");
 	}
 
 	account.balance -= amount;
@@ -66,9 +98,18 @@ function transferMoney (fromAccountId, toAccountId, amount)
 		throw new Error("Source account not found.");
 	}
 
+	if (!toAccount)
+	{
+		throw new Error("Target account not found.");
+	}
+
 	if (!Number.isFinite(amount) || amount < 0)
 	{
 		throw new Error("Invalid value for transfer amount: The amount must be a positive finite number.");
+	}
+
+	if(fromAccount.balance - amount < 0){
+		throw new Error("You cannot transfer this amount!");
 	}
 
 	toAccount.balance += amount;
