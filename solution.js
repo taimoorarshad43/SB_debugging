@@ -12,6 +12,8 @@ function getAccountById (id)
 			return account;
 		}
 	}
+	//We should only get here if we didn't find an account
+	throw new Error("Account not found, please enter a valid ID.");
 }
 
 function createAccount (newAccountId, newAccountOwner)
